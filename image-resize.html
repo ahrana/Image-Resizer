@@ -1,0 +1,95 @@
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Resizer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #233142;
+    color: #e3e3e3;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #455d7a;
+    border-radius: 10px;
+    text-align: center;
+  }
+  #preview {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  .btn {
+    background-color: #b80257;
+    color: #e3e3e3;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Image Resizer</h2>
+  <div class="form-group">
+    <label for="fileInput"><i class="fas fa-upload"></i> Upload Image:</label>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+  <div class="form-group">
+    <label for="widthInput">Width:</label>
+    <input type="number" id="widthInput" min="1" value="300">
+    <label for="heightInput">Height:</label>
+    <input type="number" id="heightInput" min="1" value="300">
+  </div>
+  <button onclick="resizeImage()" class="btn">Resize Image</button>
+  <div id="preview"></div>
+</div>
+
+<script>
+  function resizeImage() {
+    const fileInput = document.getElementById('fileInput');
+    const width = document.getElementById('widthInput').value;
+    const height = document.getElementById('heightInput').value;
+    const preview = document.getElementById('preview');
+
+    if (fileInput.files && fileInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          preview.innerHTML = '';
+          preview.appendChild(canvas);
+          const resizedImage = canvas.toDataURL('image/jpeg');
+          const newWindow = window.open();
+          newWindow.document.write('<img src="' + resizedImage + '" style="max-width:100%">');
+        }
+      }
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+  }
+</script>
+</body>
+
